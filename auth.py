@@ -1,3 +1,4 @@
+
 import streamlit as st
 import hashlib
 from database import Database
@@ -27,6 +28,13 @@ def check_auth():
         st.stop()
 
 def check_role(allowed_roles):
+    # Admin has access to all pages
+    if st.session_state.user.role == 'admin':
+        return True
+
+    if not st.session_state.user or st.session_state.user.role not in allowed_roles:
+        st.error("You don't have permission to access this page")
+        st.stop()
 
 def is_authenticated():
     return st.session_state.authenticated
@@ -36,11 +44,3 @@ def get_current_user():
 
 def get_current_language():
     return st.session_state.get('language', 'vi')
-
-    # Admin has access to all pages
-    if st.session_state.user.role == 'admin':
-        return True
-
-    if not st.session_state.user or st.session_state.user.role not in allowed_roles:
-        st.error("You don't have permission to access this page")
-        st.stop()
