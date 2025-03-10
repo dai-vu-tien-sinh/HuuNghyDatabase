@@ -1,10 +1,5 @@
 
-[browser]
-gatherUsageStats = false
-
-[theme]
-base = "dark"
-primaryColor = "#5c9ce5"
-
-[ui]
-hideTopBar = false
+[server]
+port = 5000
+enableCORS = false
+enableXsrfProtection = false
