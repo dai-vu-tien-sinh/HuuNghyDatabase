@@ -45,6 +45,7 @@ class Veteran:
     address: str
     email: str  # Added email field
     contact_info: str
+    profile_image: Optional[bytes] = None
 
 @dataclass
 class MedicalRecord:
