@@ -11,8 +11,8 @@ class Database:
 
     def create_tables(self):
         cursor = self.conn.cursor()
-        
-        # Users table
+
+        # Users table with email
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY,
@@ -20,17 +20,19 @@ class Database:
             password_hash TEXT NOT NULL,
             role TEXT NOT NULL,
             full_name TEXT NOT NULL,
+            email TEXT,  -- Added email field
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
         ''')
 
-        # Students table
+        # Students table with email
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS students (
             id INTEGER PRIMARY KEY,
             full_name TEXT NOT NULL,
             birth_date DATE NOT NULL,
             address TEXT,
+            email TEXT,  -- Added email field
             admission_date DATE NOT NULL,
             health_status TEXT,
             academic_status TEXT,
@@ -38,7 +40,7 @@ class Database:
         )
         ''')
 
-        # Veterans table
+        # Veterans table with email
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS veterans (
             id INTEGER PRIMARY KEY,
@@ -47,11 +49,12 @@ class Database:
             service_period TEXT,
             health_condition TEXT,
             address TEXT,
+            email TEXT,  -- Added email field
             contact_info TEXT
         )
         ''')
 
-        # Medical records table
+        # Medical records table with notification tracking
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS medical_records (
             id INTEGER PRIMARY KEY,
@@ -62,11 +65,12 @@ class Database:
             doctor_id INTEGER NOT NULL,
             date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             notes TEXT,
+            notification_sent BOOLEAN DEFAULT FALSE,  -- Added notification tracking
             FOREIGN KEY (doctor_id) REFERENCES users (id)
         )
         ''')
 
-        # Psychological evaluations table
+        # Psychological evaluations table with notification tracking
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS psychological_evaluations (
             id INTEGER PRIMARY KEY,
@@ -76,6 +80,7 @@ class Database:
             assessment TEXT,
             recommendations TEXT,
             follow_up_date DATE,
+            notification_sent BOOLEAN DEFAULT FALSE,  -- Added notification tracking
             FOREIGN KEY (student_id) REFERENCES students (id),
             FOREIGN KEY (evaluator_id) REFERENCES users (id)
         )
@@ -137,3 +142,74 @@ class Database:
         )
         self.conn.commit()
         return cursor.lastrowid
+
+    def send_medical_record_notification(self, record_id: int) -> bool:
+        """Send notification for medical record and update notification status."""
+        cursor = self.conn.cursor()
+        try:
+            # Get record details
+            cursor.execute("""
+                SELECT mr.*, u.full_name as doctor_name,
+                CASE 
+                    WHEN mr.patient_type = 'student' THEN s.email
+                    WHEN mr.patient_type = 'veteran' THEN v.email
+                END as patient_email
+                FROM medical_records mr
+                JOIN users u ON mr.doctor_id = u.id
+                LEFT JOIN students s ON mr.patient_id = s.id AND mr.patient_type = 'student'
+                LEFT JOIN veterans v ON mr.patient_id = v.id AND mr.patient_type = 'veteran'
+                WHERE mr.id = ?
+            """, (record_id,))
+            record = cursor.fetchone()
+
+            if record and record[-1]:  # If we have patient email
+                from email_utils import send_medical_notification
+                success = send_medical_notification(
+                    patient_email=record[-1],
+                    appointment_date=record[6].strftime("%Y-%m-%d %H:%M"),
+                    doctor_name=record[-2]
+                )
+                if success:
+                    cursor.execute(
+                        "UPDATE medical_records SET notification_sent = TRUE WHERE id = ?",
+                        (record_id,)
+                    )
+                    self.conn.commit()
+                return success
+        except Exception as e:
+            print(f"Error sending medical notification: {e}")
+            return False
+        return False
+
+    def send_psychological_evaluation_notification(self, eval_id: int) -> bool:
+        """Send notification for psychological evaluation and update notification status."""
+        cursor = self.conn.cursor()
+        try:
+            # Get evaluation details
+            cursor.execute("""
+                SELECT pe.*, u.full_name as counselor_name, s.email as student_email
+                FROM psychological_evaluations pe
+                JOIN users u ON pe.evaluator_id = u.id
+                JOIN students s ON pe.student_id = s.id
+                WHERE pe.id = ?
+            """, (eval_id,))
+            eval_record = cursor.fetchone()
+
+            if eval_record and eval_record[-1]:  # If we have student email
+                from email_utils import send_psychological_notification
+                success = send_psychological_notification(
+                    student_email=eval_record[-1],
+                    evaluation_date=eval_record[2].strftime("%Y-%m-%d %H:%M"),
+                    counselor_name=eval_record[-2]
+                )
+                if success:
+                    cursor.execute(
+                        "UPDATE psychological_evaluations SET notification_sent = TRUE WHERE id = ?",
+                        (eval_id,)
+                    )
+                    self.conn.commit()
+                return success
+        except Exception as e:
+            print(f"Error sending psychological notification: {e}")
+            return False
+        return False

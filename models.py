@@ -9,6 +9,7 @@ class User:
     password_hash: str
     role: str
     full_name: str
+    email: str  # Added email field
     created_at: datetime
 
 @dataclass
@@ -17,6 +18,7 @@ class Student:
     full_name: str
     birth_date: datetime
     address: str
+    email: str  # Added email field
     admission_date: datetime
     health_status: str
     academic_status: str
@@ -30,6 +32,7 @@ class Veteran:
     service_period: str
     health_condition: str
     address: str
+    email: str  # Added email field
     contact_info: str
 
 @dataclass
@@ -42,6 +45,7 @@ class MedicalRecord:
     doctor_id: int
     date: datetime
     notes: Optional[str]
+    notification_sent: bool  # Added notification tracking
 
 @dataclass
 class PsychologicalEvaluation:
@@ -52,3 +56,4 @@ class PsychologicalEvaluation:
     assessment: str
     recommendations: str
     follow_up_date: Optional[datetime]
+    notification_sent: bool  # Added notification tracking
