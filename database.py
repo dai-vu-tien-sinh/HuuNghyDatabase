@@ -8,6 +8,7 @@ class Database:
     def __init__(self):
         self.conn = sqlite3.connect('lang_huu_nghi.db', check_same_thread=False)
         self.create_tables()
+        self.create_initial_admin()  # Add this line
 
     def create_tables(self):
         cursor = self.conn.cursor()
@@ -212,4 +213,24 @@ class Database:
         except Exception as e:
             print(f"Error sending psychological notification: {e}")
             return False
+        return False
+
+    def create_initial_admin(self):
+        """Create an initial admin user if no users exist."""
+        cursor = self.conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM users")
+        user_count = cursor.fetchone()[0]
+
+        if user_count == 0:
+            # Create default admin user
+            username = "admin"
+            password = "admin123"
+            password_hash = hashlib.sha256(password.encode()).hexdigest()
+
+            cursor.execute("""
+                INSERT INTO users (username, password_hash, role, full_name, email)
+                VALUES (?, ?, ?, ?, ?)
+            """, (username, password_hash, "admin", "System Administrator", "admin@langhunghi.edu.vn"))
+            self.conn.commit()
+            return True
         return False
