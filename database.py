@@ -8,7 +8,8 @@ class Database:
     def __init__(self):
         self.conn = sqlite3.connect('lang_huu_nghi.db', check_same_thread=False)
         self.create_tables()
-        self.create_initial_admin()  # Add this line
+        self.create_initial_admin()
+        self.create_sample_data()  # Add this line
 
     def create_tables(self):
         cursor = self.conn.cursor()
@@ -234,3 +235,81 @@ class Database:
             self.conn.commit()
             return True
         return False
+
+    def create_sample_data(self):
+        """Create sample data for testing and demonstration."""
+        cursor = self.conn.cursor()
+
+        # Check if data already exists
+        cursor.execute("SELECT COUNT(*) FROM users")
+        if cursor.fetchone()[0] > 1:  # If we have more than just admin
+            return False
+
+        # Create sample users
+        users = [
+            ("doctor1", "password123", "doctor", "Bác sĩ Nguyễn Văn A", "doctor1@langhunghi.edu.vn"),
+            ("doctor2", "password123", "doctor", "Bác sĩ Trần Thị B", "doctor2@langhunghi.edu.vn"),
+            ("teacher1", "password123", "teacher", "Giáo viên Phạm Văn C", "teacher1@langhunghi.edu.vn"),
+            ("counselor1", "password123", "counselor", "Tư vấn Lê Thị D", "counselor1@langhunghi.edu.vn")
+        ]
+
+        for username, password, role, full_name, email in users:
+            password_hash = hashlib.sha256(password.encode()).hexdigest()
+            cursor.execute("""
+                INSERT INTO users (username, password_hash, role, full_name, email)
+                VALUES (?, ?, ?, ?, ?)
+            """, (username, password_hash, role, full_name, email))
+
+        # Create sample students
+        students = [
+            ("Nguyễn Văn Học", "2000-01-15", "Hà Nội", "student1@langhunghi.edu.vn", "2023-09-01", "Good", "Excellent"),
+            ("Trần Thị Mai", "2001-03-20", "Hải Phòng", "student2@langhunghi.edu.vn", "2023-09-01", "Fair", "Good"),
+            ("Lê Văn Nam", "2000-07-10", "Đà Nẵng", "student3@langhunghi.edu.vn", "2023-09-01", "Needs Attention", "Average")
+        ]
+
+        for name, birth, addr, email, admission, health, academic in students:
+            cursor.execute("""
+                INSERT INTO students (full_name, birth_date, address, email, admission_date, health_status, academic_status)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (name, birth, addr, email, admission, health, academic))
+
+        # Create sample veterans
+        veterans = [
+            ("Phạm Văn Chiến", "1960-05-20", "1980-1985", "Good", "Hà Nội", "veteran1@langhunghi.edu.vn", "0912345678"),
+            ("Nguyễn Thị Hòa", "1965-11-15", "1985-1990", "Fair", "Hồ Chí Minh", "veteran2@langhunghi.edu.vn", "0923456789")
+        ]
+
+        for name, birth, service, health, addr, email, contact in veterans:
+            cursor.execute("""
+                INSERT INTO veterans (full_name, birth_date, service_period, health_condition, address, email, contact_info)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (name, birth, service, health, addr, email, contact))
+
+        # Create sample medical records
+        medical_records = [
+            (1, "student", "Cảm cúm thông thường", "Nghỉ ngơi và uống thuốc", 2, "Cần theo dõi"),
+            (2, "student", "Đau đầu", "Thuốc giảm đau", 2, "Tái khám sau 1 tuần"),
+            (1, "veteran", "Đau lưng mãn tính", "Vật lý trị liệu", 3, "Cần tập thể dục thường xuyên")
+        ]
+
+        for patient_id, type, diagnosis, treatment, doctor_id, notes in medical_records:
+            cursor.execute("""
+                INSERT INTO medical_records (patient_id, patient_type, diagnosis, treatment, doctor_id, notes)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (patient_id, type, diagnosis, treatment, doctor_id, notes))
+
+        # Create sample psychological evaluations
+        evaluations = [
+            (1, "Thích nghi tốt với môi trường học tập", "Tiếp tục theo dõi", "2024-04-01"),
+            (2, "Lo âu nhẹ về học tập", "Cần tư vấn định kỳ", "2024-03-20"),
+            (3, "Khó khăn trong giao tiếp", "Tham gia các hoạt động nhóm", "2024-03-25")
+        ]
+
+        for student_id, assessment, recommendations, follow_up in evaluations:
+            cursor.execute("""
+                INSERT INTO psychological_evaluations (student_id, evaluator_id, assessment, recommendations, follow_up_date)
+                VALUES (?, ?, ?, ?, ?)
+            """, (student_id, 5, assessment, recommendations, follow_up))  # counselor1 has ID 5
+
+        self.conn.commit()
+        return True
