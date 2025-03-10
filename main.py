@@ -1,6 +1,7 @@
 import streamlit as st
 from auth import init_auth, login, logout
 from database import Database
+from translations import get_text, set_language, get_current_language
 
 st.set_page_config(
     page_title="Hệ Thống Quản Lý Làng Hữu Nghị",
@@ -11,45 +12,55 @@ st.set_page_config(
 def main():
     init_auth()
 
-    st.title("Hệ Thống Quản Lý Làng Hữu Nghị")
+    # Language selector in sidebar
+    if st.sidebar.selectbox(
+        "Language/Ngôn ngữ",
+        ["Tiếng Việt", "English"],
+        index=0 if get_current_language() == 'vi' else 1
+    ) == "English":
+        set_language('en')
+    else:
+        set_language('vi')
+
+    st.title("Hệ Thống Quản Lý Làng Hữu Nghị - Lang Huu Nghi Management System")
 
     if not st.session_state.authenticated:
         with st.form("login_form"):
-            st.subheader("Đăng Nhập")
-            username = st.text_input("Tên đăng nhập")
-            password = st.text_input("Mật khẩu", type="password")
-            submit = st.form_submit_button("Đăng nhập")
+            st.subheader(get_text("login.title"))
+            username = st.text_input(get_text("common.username"))
+            password = st.text_input(get_text("common.password"), type="password")
+            submit = st.form_submit_button(get_text("common.login"))
 
             if submit:
                 if login(username, password):
-                    st.success("Đăng nhập thành công!")
+                    st.success(get_text("login.success"))
                     st.rerun()
                 else:
-                    st.error("Tên đăng nhập hoặc mật khẩu không đúng")
+                    st.error(get_text("login.error"))
     else:
-        st.sidebar.title(f"Xin chào, {st.session_state.user.full_name}")
-        st.sidebar.text(f"Vai trò: {st.session_state.user.role}")
+        st.sidebar.title(f"{get_text('common.welcome')}, {st.session_state.user.full_name}")
+        st.sidebar.text(f"{get_text('common.role')}: {st.session_state.user.role}")
 
-        if st.sidebar.button("Đăng xuất"):
+        if st.sidebar.button(get_text("common.logout")):
             logout()
             st.rerun()
 
-        # Hiển thị dashboard theo vai trò
+        # Display role-specific dashboard
         if st.session_state.user.role == "admin":
-            st.header("Bảng Điều Khiển Quản Trị")
-            st.write("Chào mừng đến với bảng điều khiển quản trị. Sử dụng thanh bên để điều hướng đến các phần khác nhau.")
+            st.header(get_text("dashboard.admin.title"))
+            st.write(get_text("dashboard.admin.welcome"))
 
         elif st.session_state.user.role == "doctor":
-            st.header("Bảng Điều Khiển Y Tế")
-            st.write("Truy cập hồ sơ y tế và thông tin bệnh nhân thông qua menu bên.")
+            st.header(get_text("dashboard.doctor.title"))
+            st.write(get_text("dashboard.doctor.welcome"))
 
         elif st.session_state.user.role == "teacher":
-            st.header("Bảng Điều Khiển Giáo Viên")
-            st.write("Xem và quản lý thông tin sinh viên bằng menu bên.")
+            st.header(get_text("dashboard.teacher.title"))
+            st.write(get_text("dashboard.teacher.welcome"))
 
         elif st.session_state.user.role == "counselor":
-            st.header("Bảng Điều Khiển Tư Vấn")
-            st.write("Truy cập đánh giá tâm lý và thông tin hỗ trợ sinh viên.")
+            st.header(get_text("dashboard.counselor.title"))
+            st.write(get_text("dashboard.counselor.welcome"))
 
 if __name__ == "__main__":
     main()
