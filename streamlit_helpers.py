@@ -3,6 +3,18 @@ from streamlit.runtime.scriptrunner import get_script_run_ctx
 import re
 from translations import get_text
 
+# Add custom font styling
+def apply_custom_css():
+    custom_css = """
+    <style>
+        html, body, [class*="css"] {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important;
+        }
+    </style>
+    """
+    st.markdown(custom_css, unsafe_allow_html=True)
+
+
 def translate_sidebar_nav():
     """
     This function injects CSS to translate the sidebar navigation items.

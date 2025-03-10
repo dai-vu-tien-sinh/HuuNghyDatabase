@@ -3,12 +3,15 @@ import streamlit.components.v1 as components
 from auth import check_auth, init_auth, login, logout
 from database import Database
 from translations import get_text, set_language
-from streamlit_helpers import translate_sidebar_nav
+from streamlit_helpers import translate_sidebar_nav, apply_custom_css
 import pandas as pd
 
 st.set_page_config(
     page_title="Hệ Thống Quản Lý Làng Hữu Nghị",
     page_icon="🏠",
+    
+# Apply custom CSS to fix font issues
+apply_custom_css()
     layout="wide"
 )
 
