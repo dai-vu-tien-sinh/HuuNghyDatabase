@@ -7,8 +7,12 @@ from auth import check_auth, check_role
 from database import Database
 from utils import show_success, show_error
 from translations import get_text
+from streamlit_helpers import translate_sidebar_nav
 
 def render():
+    # Apply sidebar translation
+    translate_sidebar_nav()
+    
     check_auth()
     check_role(['admin', 'teacher'])
 
@@ -22,95 +26,107 @@ def render():
     
     if uploaded_file is not None:
         try:
-            df = pd.read_excel(uploaded_file)
-            st.write("Preview of uploaded data:")
-            st.dataframe(df)
-            
-            # Mapping columns
-            st.subheader("Map Columns")
-            st.write("Please match the Excel columns with the database fields:")
-            
-            # Get column names from Excel
-            columns = df.columns.tolist()
-            
-            # Define required fields for students
-            required_fields = ['full_name', 'birth_date', 'address', 'email', 'admission_date', 'health_status', 'academic_status']
-            
-            # Create mapping
-            field_mapping = {}
-            for field in required_fields:
-                field_mapping[field] = st.selectbox(
-                    f"Map field '{field}' to column:", 
-                    ["-- Ignore --"] + columns,
-                    key=f"map_{field}"
-                )
-            
-            if st.button("Import Data"):
-                success_count = 0
-                error_count = 0
+            # Read the file using pandas
+            try:
+                df = pd.read_excel(uploaded_file)
+                st.write("Preview of uploaded data:")
+                st.dataframe(df)
                 
-                for _, row in df.iterrows():
-                    try:
-                        # Create a dictionary of values to insert
-                        student_data = {}
-                        for field, column in field_mapping.items():
-                            if column != "-- Ignore --":
-                                value = row[column]
-                                # Handle date fields correctly
-                                if field == 'birth_date' or field == 'admission_date':
-                                    if pd.isna(value):
-                                        value = None
-                                    elif isinstance(value, str):
-                                        try:
-                                            value = pd.to_datetime(value).strftime('%Y-%m-%d')
-                                        except:
-                                            value = None
-                                    else:
-                                        try:
-                                            value = pd.Timestamp(value).strftime('%Y-%m-%d')
-                                        except:
-                                            value = None
-                                
-                                # Handle NaN values
-                                if pd.isna(value):
-                                    value = None if field in ['birth_date', 'admission_date'] else ""
-                                    
-                                student_data[field] = value
-                        
-                        # Check if we have the required fields with values
-                        if 'full_name' in student_data and student_data['full_name']:
-                            cursor = db.conn.cursor()
-                            # Create placeholders and values for SQL
-                            fields = []
-                            placeholders = []
-                            values = []
-                            
-                            for field, value in student_data.items():
-                                if value is not None:
-                                    fields.append(field)
-                                    placeholders.append("?")
-                                    values.append(value)
-                            
-                            if fields:
-                                # Construct and execute the INSERT query
-                                query = f"INSERT INTO students ({','.join(fields)}) VALUES ({','.join(placeholders)})"
-                                cursor.execute(query, values)
-                                db.conn.commit()
-                                success_count += 1
-                        else:
-                            error_count += 1
-                    except Exception as e:
-                        st.error(f"Error processing row: {e}")
-                        error_count += 1
+                # Mapping columns
+                st.subheader("Map Columns")
+                st.write("Please match the Excel columns with the database fields:")
                 
-                if success_count > 0:
-                    show_success(f"Successfully imported {success_count} students!")
-                if error_count > 0:
-                    show_error(f"Failed to import {error_count} records")
+                # Get column names from Excel
+                columns = df.columns.tolist()
                 
-                if success_count > 0:
-                    if st.button("View Students"):
-                        st.switch_page("pages/students.py")
+                # Define required fields for students
+                required_fields = ['full_name', 'birth_date', 'address', 'email', 'admission_date', 'health_status', 'academic_status']
+                
+                # Create mapping
+                field_mapping = {}
+                for field in required_fields:
+                    field_mapping[field] = st.selectbox(
+                        f"Map field '{field}' to column:", 
+                        ["-- Ignore --"] + columns,
+                        key=f"map_{field}"
+                    )
+                
+                if st.button("Import Data"):
+                    success_count = 0
+                    error_count = 0
                     
+                    for _, row in df.iterrows():
+                        try:
+                            # Create a dictionary of values to insert
+                            student_data = {}
+                            for field, column in field_mapping.items():
+                                if column != "-- Ignore --":
+                                    value = row[column]
+                                    # Handle date fields correctly
+                                    if field == 'birth_date' or field == 'admission_date':
+                                        if pd.isna(value):
+                                            value = None
+                                        elif isinstance(value, str):
+                                            try:
+                                                value = pd.to_datetime(value).strftime('%Y-%m-%d')
+                                            except:
+                                                value = None
+                                        else:
+                                            try:
+                                                value = pd.Timestamp(value).strftime('%Y-%m-%d')
+                                            except:
+                                                value = None
+                                    
+                                    # Handle NaN values
+                                    if pd.isna(value):
+                                        value = None if field in ['birth_date', 'admission_date'] else ""
+                                        
+                                    student_data[field] = value
+                            
+                            # Check if we have the required fields with values
+                            if 'full_name' in student_data and student_data['full_name']:
+                                cursor = db.conn.cursor()
+                                # Create placeholders and values for SQL
+                                fields = []
+                                placeholders = []
+                                values = []
+                                
+                                for field, value in student_data.items():
+                                    if value is not None:
+                                        fields.append(field)
+                                        placeholders.append("?")
+                                        values.append(value)
+                                
+                                if fields:
+                                    # Construct and execute the INSERT query
+                                    query = f"INSERT INTO students ({','.join(fields)}) VALUES ({','.join(placeholders)})"
+                                    cursor.execute(query, values)
+                                    db.conn.commit()
+                                    success_count += 1
+                            else:
+                                error_count += 1
+                        except Exception as e:
+                            st.error(f"Error processing row: {e}")
+                            error_count += 1
+                    
+                    if success_count > 0:
+                        show_success(f"Successfully imported {success_count} students!")
+                    if error_count > 0:
+                        show_error(f"Failed to import {error_count} records")
+                    
+                    if success_count > 0:
+                        if st.button("View Students"):
+                            st.switch_page("pages/students.py")
+            except Exception as e:
+                st.error(f"Error reading Excel file: {str(e)}")
+                st.error("The Excel file may be in a format that cannot be read. Please ensure it's a valid Excel file.")
+                
+                # Show some help for Vietnamese filenames
+                if "ds trẻ em" in uploaded_file.name:
+                    st.warning("Files with Vietnamese characters in the filename may cause issues. Try renaming the file to use English characters only.")
         except Exception as e:
-            show_error(f"Error reading Excel file: {str(e)}")
+            show_error(f"Error processing file: {str(e)}")
+
+# This is needed to make the page work
+if __name__ == "__main__":
+    render()

@@ -126,6 +126,24 @@ def translate_sidebar_nav():
         left: 0;
         content: "%s";
     }
+    
+    /* Data Import page */
+    [data-testid="stSidebar"] a[href="/data_import"],
+    .st-emotion-cache-j9xo7p a[href="/data_import"],
+    .st-emotion-cache-16idsys a[href="/data_import"],
+    .st-emotion-cache-7ym5gk a[href="/data_import"] {
+        visibility: hidden;
+        position: relative;
+    }
+    [data-testid="stSidebar"] a[href="/data_import"]:after,
+    .st-emotion-cache-j9xo7p a[href="/data_import"]:after,
+    .st-emotion-cache-16idsys a[href="/data_import"]:after,
+    .st-emotion-cache-7ym5gk a[href="/data_import"]:after {
+        visibility: visible;
+        position: absolute;
+        left: 0;
+        content: "Import Data";
+    }
     </style>
     """ % (
         get_text("navigation.main"),

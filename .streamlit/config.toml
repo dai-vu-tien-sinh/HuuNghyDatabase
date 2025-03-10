@@ -1,5 +1,17 @@
 
+[theme]
+primaryColor="#FF6B6B"
+backgroundColor="#F8F9FA"
+secondaryBackgroundColor="#E9ECEF"
+textColor="#212529"
+font="sans serif"
+
 [server]
-port = 5000
-enableCORS = false
-enableXsrfProtection = false
+maxUploadSize=50
+enableXsrfProtection=false
+enableCORS=false
+headless=true
+port=5000
+
+[browser]
+gatherUsageStats=false

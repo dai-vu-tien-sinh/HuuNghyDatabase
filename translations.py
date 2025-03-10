@@ -114,7 +114,7 @@ en = {
         "psychology": "Psychology",
         "students": "Students",
         "veterans": "Veterans",
-        "data_import": "Data Import"
+        "data_import": "Import Data"
     },
     "roles": {
         "admin": "Administrator",
