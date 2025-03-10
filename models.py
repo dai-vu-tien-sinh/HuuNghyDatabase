@@ -1,0 +1,54 @@
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Optional
+
+@dataclass
+class User:
+    id: int
+    username: str
+    password_hash: str
+    role: str
+    full_name: str
+    created_at: datetime
+
+@dataclass
+class Student:
+    id: int
+    full_name: str
+    birth_date: datetime
+    address: str
+    admission_date: datetime
+    health_status: str
+    academic_status: str
+    psychological_status: str
+
+@dataclass
+class Veteran:
+    id: int
+    full_name: str
+    birth_date: datetime
+    service_period: str
+    health_condition: str
+    address: str
+    contact_info: str
+
+@dataclass
+class MedicalRecord:
+    id: int
+    patient_id: int
+    patient_type: str  # 'student' or 'veteran'
+    diagnosis: str
+    treatment: str
+    doctor_id: int
+    date: datetime
+    notes: Optional[str]
+
+@dataclass
+class PsychologicalEvaluation:
+    id: int
+    student_id: int
+    evaluation_date: datetime
+    evaluator_id: int
+    assessment: str
+    recommendations: str
+    follow_up_date: Optional[datetime]
