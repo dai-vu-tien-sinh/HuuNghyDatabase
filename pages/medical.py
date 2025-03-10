@@ -40,7 +40,7 @@ def render():
                             if st.button(f"Send Email Notification", key=f"notify_{record[0]}"):
                                 if db.send_medical_record_notification(record[0]):
                                     show_success("Notification sent successfully!")
-                                    st.experimental_rerun()
+                                    st.rerun()
                                 else:
                                     show_error("Failed to send notification")
                         else:
@@ -80,7 +80,7 @@ def render():
                                 show_success("Notification sent successfully!")
                             else:
                                 show_error("Failed to send notification")
-                        st.experimental_rerun()
+                        st.rerun()
                 except Exception as e:
                     show_error(f"Error adding medical record: {str(e)}")
 
