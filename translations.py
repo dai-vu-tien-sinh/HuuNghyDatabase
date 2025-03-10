@@ -19,6 +19,12 @@ vi = {
         "error": "Lỗi",
         "select_language": "Chọn ngôn ngữ"
     },
+    "roles": {
+        "admin": "Quản trị viên",
+        "doctor": "Bác sĩ",
+        "teacher": "Giáo viên",
+        "counselor": "Tư vấn viên"
+    },
     "login": {
         "title": "Đăng nhập",
         "success": "Đăng nhập thành công!",
@@ -91,6 +97,12 @@ en = {
         "success": "Success",
         "error": "Error",
         "select_language": "Select Language"
+    },
+    "roles": {
+        "admin": "Administrator",
+        "doctor": "Doctor",
+        "teacher": "Teacher",
+        "counselor": "Counselor"
     },
     "login": {
         "title": "Login",

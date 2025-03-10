@@ -12,11 +12,19 @@ st.set_page_config(
 def main():
     init_auth()
 
+    # Initialize language first
+    if 'language_initialized' not in st.session_state:
+        st.session_state.language_initialized = True
+        set_language('vi')  # Default to Vietnamese
+    
     # Language selector in sidebar
+    current_lang = get_current_language()
+    lang_selector_text = "Language/Ngôn ngữ" if current_lang == 'en' else "Ngôn ngữ/Language"
+    
     if st.sidebar.selectbox(
-        "Language/Ngôn ngữ",
+        lang_selector_text,
         ["Tiếng Việt", "English"],
-        index=0 if get_current_language() == 'vi' else 1
+        index=0 if current_lang == 'vi' else 1
     ) == "English":
         set_language('en')
     else:
@@ -39,7 +47,7 @@ def main():
                     st.error(get_text("login.error"))
     else:
         st.sidebar.title(f"{get_text('common.welcome')}, {st.session_state.user.full_name}")
-        st.sidebar.text(f"{get_text('common.role')}: {st.session_state.user.role}")
+        st.sidebar.text(f"{get_text('common.role')}: {get_text('roles.' + st.session_state.user.role)}")
 
         if st.sidebar.button(get_text("common.logout")):
             logout()
