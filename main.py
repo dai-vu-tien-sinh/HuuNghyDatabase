@@ -1,6 +1,6 @@
 import streamlit as st
 import streamlit.components.v1 as components
-from auth import check_auth, is_authenticated, get_current_user
+from auth import check_auth, init_auth, login, logout
 from database import Database
 from translations import get_text, set_language
 from streamlit_helpers import translate_sidebar_nav
@@ -21,7 +21,7 @@ def main():
         set_language('vi')  # Default to Vietnamese
 
     # Language selector in sidebar
-    current_lang = get_current_language()
+    current_lang = st.session_state.get('language', 'vi')
 
     if st.sidebar.selectbox(
         get_text("common.select_language"),

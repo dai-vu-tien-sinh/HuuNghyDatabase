@@ -27,6 +27,16 @@ def check_auth():
         st.stop()
 
 def check_role(allowed_roles):
+
+def is_authenticated():
+    return st.session_state.authenticated
+
+def get_current_user():
+    return st.session_state.user
+
+def get_current_language():
+    return st.session_state.get('language', 'vi')
+
     # Admin has access to all pages
     if st.session_state.user.role == 'admin':
         return True
