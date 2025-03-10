@@ -34,6 +34,7 @@ class Student:
     health_status: str
     academic_status: str
     psychological_status: str
+    profile_image: Optional[bytes] = None
 
 @dataclass
 class Veteran:
