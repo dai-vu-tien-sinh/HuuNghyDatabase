@@ -9,8 +9,7 @@ class Database:
         self.conn = sqlite3.connect('lang_huu_nghi.db', check_same_thread=False)
         self.create_tables()
         self.create_initial_admin()
-        self.create_sample_data()  # Add this line
-
+        self.create_sample_data()  
     def create_tables(self):
         cursor = self.conn.cursor()
 
@@ -22,27 +21,28 @@ class Database:
             password_hash TEXT NOT NULL,
             role TEXT NOT NULL,
             full_name TEXT NOT NULL,
-            email TEXT,  -- Added email field
+            email TEXT,  
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
         ''')
 
-        # Students table with email
+        # Students table with email and image
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS students (
             id INTEGER PRIMARY KEY,
             full_name TEXT NOT NULL,
             birth_date DATE NOT NULL,
             address TEXT,
-            email TEXT,  -- Added email field
+            email TEXT,  
             admission_date DATE NOT NULL,
             health_status TEXT,
             academic_status TEXT,
-            psychological_status TEXT
+            psychological_status TEXT,
+            profile_image BLOB
         )
         ''')
 
-        # Veterans table with email
+        # Veterans table with email and image
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS veterans (
             id INTEGER PRIMARY KEY,
@@ -51,8 +51,9 @@ class Database:
             service_period TEXT,
             health_condition TEXT,
             address TEXT,
-            email TEXT,  -- Added email field
-            contact_info TEXT
+            email TEXT,  
+            contact_info TEXT,
+            profile_image BLOB
         )
         ''')
 
@@ -67,7 +68,7 @@ class Database:
             doctor_id INTEGER NOT NULL,
             date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             notes TEXT,
-            notification_sent BOOLEAN DEFAULT FALSE,  -- Added notification tracking
+            notification_sent BOOLEAN DEFAULT FALSE,  
             FOREIGN KEY (doctor_id) REFERENCES users (id)
         )
         ''')
@@ -82,7 +83,7 @@ class Database:
             assessment TEXT,
             recommendations TEXT,
             follow_up_date DATE,
-            notification_sent BOOLEAN DEFAULT FALSE,  -- Added notification tracking
+            notification_sent BOOLEAN DEFAULT FALSE,  
             FOREIGN KEY (student_id) REFERENCES students (id),
             FOREIGN KEY (evaluator_id) REFERENCES users (id)
         )
@@ -313,3 +314,58 @@ class Database:
 
         self.conn.commit()
         return True
+    
+    def update_tables_for_images(self):
+        cursor = self.conn.cursor()
+
+        # Add image column to students table
+        cursor.execute('''
+        ALTER TABLE students
+        ADD COLUMN profile_image BLOB
+        ''')
+
+        # Add image column to veterans table
+        cursor.execute('''
+        ALTER TABLE veterans 
+        ADD COLUMN profile_image BLOB
+        ''')
+
+        self.conn.commit()
+
+    def save_student_image(self, student_id: int, image_data: bytes) -> bool:
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute(
+                "UPDATE students SET profile_image = ? WHERE id = ?",
+                (image_data, student_id)
+            )
+            self.conn.commit()
+            return True
+        except Exception as e:
+            print(f"Error saving student image: {e}")
+            return False
+
+    def save_veteran_image(self, veteran_id: int, image_data: bytes) -> bool:
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute(
+                "UPDATE veterans SET profile_image = ? WHERE id = ?",
+                (image_data, veteran_id)
+            )
+            self.conn.commit()
+            return True
+        except Exception as e:
+            print(f"Error saving veteran image: {e}")
+            return False
+
+    def get_student_image(self, student_id: int) -> Optional[bytes]:
+        cursor = self.conn.cursor()
+        cursor.execute("SELECT profile_image FROM students WHERE id = ?", (student_id,))
+        result = cursor.fetchone()
+        return result[0] if result else None
+
+    def get_veteran_image(self, veteran_id: int) -> Optional[bytes]:
+        cursor = self.conn.cursor()
+        cursor.execute("SELECT profile_image FROM veterans WHERE id = ?", (veteran_id,))
+        result = cursor.fetchone()
+        return result[0] if result else None
