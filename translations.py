@@ -25,7 +25,8 @@ vi = {
         "medical": "Y tế",
         "psychology": "Tâm lý",
         "students": "Sinh viên",
-        "veterans": "Cựu chiến binh"
+        "veterans": "Cựu chiến binh",
+        "data_import": "Nhập Dữ Liệu"
     },
     "roles": {
         "admin": "Quản trị viên",
@@ -112,7 +113,8 @@ en = {
         "medical": "Medical",
         "psychology": "Psychology",
         "students": "Students",
-        "veterans": "Veterans"
+        "veterans": "Veterans",
+        "data_import": "Data Import"
     },
     "roles": {
         "admin": "Administrator",
@@ -193,13 +195,13 @@ class Translator:
         """
         keys = key_path.split('.')
         value = self.translations[self.current_language]
-        
+
         for key in keys:
             if isinstance(value, dict) and key in value:
                 value = value[key]
             else:
                 return default if default is not None else key_path
-                
+
         return value
 
 # Create a global translator instance

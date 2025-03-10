@@ -1,4 +1,3 @@
-
 import streamlit as st
 from streamlit.runtime.scriptrunner import get_script_run_ctx
 import re
@@ -13,9 +12,9 @@ def translate_sidebar_nav():
     ctx = get_script_run_ctx()
     if ctx is None:
         return
-    
+
     current_page = ctx.page_script_hash
-    
+
     # CSS for translating sidebar labels
     css = """
     <style>
@@ -37,7 +36,7 @@ def translate_sidebar_nav():
         left: 0;
         content: "%s";
     }
-    
+
     /* Admin page */
     [data-testid="stSidebar"] a[href="/admin"],
     .st-emotion-cache-j9xo7p a[href="/admin"],
@@ -55,7 +54,7 @@ def translate_sidebar_nav():
         left: 0;
         content: "%s";
     }
-    
+
     /* Medical page */
     [data-testid="stSidebar"] a[href="/medical"],
     .st-emotion-cache-j9xo7p a[href="/medical"],
@@ -73,7 +72,7 @@ def translate_sidebar_nav():
         left: 0;
         content: "%s";
     }
-    
+
     /* Psychology page */
     [data-testid="stSidebar"] a[href="/psychology"],
     .st-emotion-cache-j9xo7p a[href="/psychology"],
@@ -91,7 +90,7 @@ def translate_sidebar_nav():
         left: 0;
         content: "%s";
     }
-    
+
     /* Students page */
     [data-testid="stSidebar"] a[href="/students"],
     .st-emotion-cache-j9xo7p a[href="/students"],
@@ -109,7 +108,7 @@ def translate_sidebar_nav():
         left: 0;
         content: "%s";
     }
-    
+
     /* Veterans page */
     [data-testid="stSidebar"] a[href="/veterans"],
     .st-emotion-cache-j9xo7p a[href="/veterans"],
@@ -136,5 +135,5 @@ def translate_sidebar_nav():
         get_text("navigation.students"),
         get_text("navigation.veterans")
     )
-    
+
     st.markdown(css, unsafe_allow_html=True)
