@@ -9,11 +9,11 @@ import pandas as pd
 st.set_page_config(
     page_title="Hệ Thống Quản Lý Làng Hữu Nghị",
     page_icon="🏠",
-    
-# Apply custom CSS to fix font issues
-apply_custom_css()
     layout="wide"
 )
+
+# Apply custom CSS to fix font issues
+apply_custom_css()
 
 def main():
     init_auth()
