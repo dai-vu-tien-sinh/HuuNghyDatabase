@@ -12,6 +12,20 @@ class Database:
         self.create_sample_data()  
     def create_tables(self):
         cursor = self.conn.cursor()
+        
+        # Family info table
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS family_info (
+            id INTEGER PRIMARY KEY,
+            patient_id INTEGER NOT NULL,
+            patient_type TEXT NOT NULL,
+            father_name TEXT,
+            mother_name TEXT,
+            birth_order INTEGER,
+            occupation TEXT,
+            caregiver_info TEXT
+        )
+        ''')
 
         # Users table with email
         cursor.execute('''
@@ -369,3 +383,57 @@ class Database:
         cursor.execute("SELECT profile_image FROM veterans WHERE id = ?", (veteran_id,))
         result = cursor.fetchone()
         return result[0] if result else None
+        
+    def add_family_info(self, family_info: dict) -> int:
+        """Add family information for a patient"""
+        cursor = self.conn.cursor()
+        cursor.execute(
+            """INSERT INTO family_info 
+            (patient_id, patient_type, father_name, mother_name, birth_order, occupation, caregiver_info)
+            VALUES (?, ?, ?, ?, ?, ?, ?)""",
+            (family_info["patient_id"], family_info["patient_type"], family_info["father_name"],
+             family_info["mother_name"], family_info["birth_order"], 
+             family_info["occupation"], family_info["caregiver_info"])
+        )
+        self.conn.commit()
+        return cursor.lastrowid
+        
+    def get_family_info(self, patient_id: int, patient_type: str) -> Optional[dict]:
+        """Get family information for a patient"""
+        cursor = self.conn.cursor()
+        cursor.execute(
+            "SELECT * FROM family_info WHERE patient_id = ? AND patient_type = ?",
+            (patient_id, patient_type)
+        )
+        result = cursor.fetchone()
+        if result:
+            return {
+                "id": result[0],
+                "patient_id": result[1],
+                "patient_type": result[2],
+                "father_name": result[3],
+                "mother_name": result[4],
+                "birth_order": result[5],
+                "occupation": result[6],
+                "caregiver_info": result[7]
+            }
+        return None
+        
+    def update_family_info(self, family_id: int, family_info: dict) -> bool:
+        """Update family information"""
+        cursor = self.conn.cursor()
+        try:
+            cursor.execute(
+                """UPDATE family_info 
+                SET father_name = ?, mother_name = ?, birth_order = ?, 
+                occupation = ?, caregiver_info = ?
+                WHERE id = ?""",
+                (family_info["father_name"], family_info["mother_name"], 
+                 family_info["birth_order"], family_info["occupation"], 
+                 family_info["caregiver_info"], family_id)
+            )
+            self.conn.commit()
+            return True
+        except Exception as e:
+            print(f"Error updating family info: {e}")
+            return False

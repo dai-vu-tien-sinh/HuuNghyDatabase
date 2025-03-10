@@ -3,6 +3,17 @@ from datetime import datetime
 from typing import Optional
 
 @dataclass
+class FamilyInfo:
+    id: int
+    patient_id: int
+    patient_type: str  # 'student' or 'veteran'
+    father_name: str
+    mother_name: str
+    birth_order: int
+    occupation: str
+    caregiver_info: str
+    
+@dataclass
 class User:
     id: int
     username: str
