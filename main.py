@@ -19,10 +19,9 @@ def main():
     
     # Language selector in sidebar
     current_lang = get_current_language()
-    lang_selector_text = "Language/Ngôn ngữ" if current_lang == 'en' else "Ngôn ngữ/Language"
     
     if st.sidebar.selectbox(
-        lang_selector_text,
+        get_text("common.select_language"),
         ["Tiếng Việt", "English"],
         index=0 if current_lang == 'vi' else 1
     ) == "English":
