@@ -9,7 +9,14 @@ class Database:
         self.conn = sqlite3.connect('lang_huu_nghi.db', check_same_thread=False)
         self.create_tables()
         self.create_initial_admin()
-        self.create_sample_data()  
+        self.create_sample_data()
+        # Add the profile_image column if it doesn't exist
+        try:
+            self.update_tables_for_images()
+        except sqlite3.OperationalError as e:
+            # Column might already exist, which is fine
+            if "duplicate column name" not in str(e).lower():
+                raise e  
     def create_tables(self):
         cursor = self.conn.cursor()
         
@@ -332,17 +339,25 @@ class Database:
     def update_tables_for_images(self):
         cursor = self.conn.cursor()
 
-        # Add image column to students table
-        cursor.execute('''
-        ALTER TABLE students
-        ADD COLUMN profile_image BLOB
-        ''')
+        # Check if profile_image column exists in students table
+        cursor.execute("PRAGMA table_info(students)")
+        columns = [info[1] for info in cursor.fetchall()]
+        if "profile_image" not in columns:
+            # Add image column to students table
+            cursor.execute('''
+            ALTER TABLE students
+            ADD COLUMN profile_image BLOB
+            ''')
 
-        # Add image column to veterans table
-        cursor.execute('''
-        ALTER TABLE veterans 
-        ADD COLUMN profile_image BLOB
-        ''')
+        # Check if profile_image column exists in veterans table
+        cursor.execute("PRAGMA table_info(veterans)")
+        columns = [info[1] for info in cursor.fetchall()]
+        if "profile_image" not in columns:
+            # Add image column to veterans table
+            cursor.execute('''
+            ALTER TABLE veterans 
+            ADD COLUMN profile_image BLOB
+            ''')
 
         self.conn.commit()
 
