@@ -17,9 +17,6 @@ def main():
     if 'language_initialized' not in st.session_state:
         st.session_state.language_initialized = True
         set_language('vi')  # Default to Vietnamese
-        
-    # Apply sidebar translations
-    translate_sidebar_nav()
     
     # Language selector in sidebar
     current_lang = get_current_language()
@@ -32,6 +29,9 @@ def main():
         set_language('en')
     else:
         set_language('vi')
+        
+    # Apply sidebar translations after language is set
+    translate_sidebar_nav()
 
     st.title("Hệ Thống Quản Lý Làng Hữu Nghị - Lang Huu Nghi Management System")
 

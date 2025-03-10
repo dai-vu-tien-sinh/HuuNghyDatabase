@@ -19,12 +19,19 @@ def translate_sidebar_nav():
     # CSS for translating sidebar labels
     css = """
     <style>
+    /* Target all sidebar nav links with more comprehensive selectors */
     /* Main page */
-    .st-emotion-cache-j9xo7p a[href="/"] {
+    [data-testid="stSidebar"] a[href="/"],
+    .st-emotion-cache-j9xo7p a[href="/"],
+    .st-emotion-cache-16idsys a[href="/"],
+    .st-emotion-cache-7ym5gk a[href="/"] {
         visibility: hidden;
         position: relative;
     }
-    .st-emotion-cache-j9xo7p a[href="/"]:after {
+    [data-testid="stSidebar"] a[href="/"]:after,
+    .st-emotion-cache-j9xo7p a[href="/"]:after,
+    .st-emotion-cache-16idsys a[href="/"]:after,
+    .st-emotion-cache-7ym5gk a[href="/"]:after {
         visibility: visible;
         position: absolute;
         left: 0;
@@ -32,11 +39,17 @@ def translate_sidebar_nav():
     }
     
     /* Admin page */
-    .st-emotion-cache-j9xo7p a[href="/admin"] {
+    [data-testid="stSidebar"] a[href="/admin"],
+    .st-emotion-cache-j9xo7p a[href="/admin"],
+    .st-emotion-cache-16idsys a[href="/admin"],
+    .st-emotion-cache-7ym5gk a[href="/admin"] {
         visibility: hidden;
         position: relative;
     }
-    .st-emotion-cache-j9xo7p a[href="/admin"]:after {
+    [data-testid="stSidebar"] a[href="/admin"]:after,
+    .st-emotion-cache-j9xo7p a[href="/admin"]:after,
+    .st-emotion-cache-16idsys a[href="/admin"]:after,
+    .st-emotion-cache-7ym5gk a[href="/admin"]:after {
         visibility: visible;
         position: absolute;
         left: 0;
@@ -44,11 +57,17 @@ def translate_sidebar_nav():
     }
     
     /* Medical page */
-    .st-emotion-cache-j9xo7p a[href="/medical"] {
+    [data-testid="stSidebar"] a[href="/medical"],
+    .st-emotion-cache-j9xo7p a[href="/medical"],
+    .st-emotion-cache-16idsys a[href="/medical"],
+    .st-emotion-cache-7ym5gk a[href="/medical"] {
         visibility: hidden;
         position: relative;
     }
-    .st-emotion-cache-j9xo7p a[href="/medical"]:after {
+    [data-testid="stSidebar"] a[href="/medical"]:after,
+    .st-emotion-cache-j9xo7p a[href="/medical"]:after,
+    .st-emotion-cache-16idsys a[href="/medical"]:after,
+    .st-emotion-cache-7ym5gk a[href="/medical"]:after {
         visibility: visible;
         position: absolute;
         left: 0;
@@ -56,11 +75,17 @@ def translate_sidebar_nav():
     }
     
     /* Psychology page */
-    .st-emotion-cache-j9xo7p a[href="/psychology"] {
+    [data-testid="stSidebar"] a[href="/psychology"],
+    .st-emotion-cache-j9xo7p a[href="/psychology"],
+    .st-emotion-cache-16idsys a[href="/psychology"],
+    .st-emotion-cache-7ym5gk a[href="/psychology"] {
         visibility: hidden;
         position: relative;
     }
-    .st-emotion-cache-j9xo7p a[href="/psychology"]:after {
+    [data-testid="stSidebar"] a[href="/psychology"]:after,
+    .st-emotion-cache-j9xo7p a[href="/psychology"]:after,
+    .st-emotion-cache-16idsys a[href="/psychology"]:after,
+    .st-emotion-cache-7ym5gk a[href="/psychology"]:after {
         visibility: visible;
         position: absolute;
         left: 0;
@@ -68,11 +93,17 @@ def translate_sidebar_nav():
     }
     
     /* Students page */
-    .st-emotion-cache-j9xo7p a[href="/students"] {
+    [data-testid="stSidebar"] a[href="/students"],
+    .st-emotion-cache-j9xo7p a[href="/students"],
+    .st-emotion-cache-16idsys a[href="/students"],
+    .st-emotion-cache-7ym5gk a[href="/students"] {
         visibility: hidden;
         position: relative;
     }
-    .st-emotion-cache-j9xo7p a[href="/students"]:after {
+    [data-testid="stSidebar"] a[href="/students"]:after,
+    .st-emotion-cache-j9xo7p a[href="/students"]:after,
+    .st-emotion-cache-16idsys a[href="/students"]:after,
+    .st-emotion-cache-7ym5gk a[href="/students"]:after {
         visibility: visible;
         position: absolute;
         left: 0;
@@ -80,11 +111,17 @@ def translate_sidebar_nav():
     }
     
     /* Veterans page */
-    .st-emotion-cache-j9xo7p a[href="/veterans"] {
+    [data-testid="stSidebar"] a[href="/veterans"],
+    .st-emotion-cache-j9xo7p a[href="/veterans"],
+    .st-emotion-cache-16idsys a[href="/veterans"],
+    .st-emotion-cache-7ym5gk a[href="/veterans"] {
         visibility: hidden;
         position: relative;
     }
-    .st-emotion-cache-j9xo7p a[href="/veterans"]:after {
+    [data-testid="stSidebar"] a[href="/veterans"]:after,
+    .st-emotion-cache-j9xo7p a[href="/veterans"]:after,
+    .st-emotion-cache-16idsys a[href="/veterans"]:after,
+    .st-emotion-cache-7ym5gk a[href="/veterans"]:after {
         visibility: visible;
         position: absolute;
         left: 0;
