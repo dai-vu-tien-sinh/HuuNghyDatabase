@@ -1,4 +1,8 @@
 import streamlit as st
+from streamlit_helpers import translate_sidebar_nav
+
+# Apply sidebar translations
+translate_sidebar_nav()
 from datetime import datetime
 from auth import check_auth, check_role
 from database import Database

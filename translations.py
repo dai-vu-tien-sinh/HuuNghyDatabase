@@ -19,6 +19,14 @@ vi = {
         "error": "Lỗi",
         "select_language": "Chọn ngôn ngữ"
     },
+    "navigation": {
+        "main": "Trang chính",
+        "admin": "Quản trị",
+        "medical": "Y tế",
+        "psychology": "Tâm lý",
+        "students": "Sinh viên",
+        "veterans": "Cựu chiến binh"
+    },
     "roles": {
         "admin": "Quản trị viên",
         "doctor": "Bác sĩ",
@@ -97,6 +105,14 @@ en = {
         "success": "Success",
         "error": "Error",
         "select_language": "Select Language"
+    },
+    "navigation": {
+        "main": "Main",
+        "admin": "Admin",
+        "medical": "Medical",
+        "psychology": "Psychology",
+        "students": "Students",
+        "veterans": "Veterans"
     },
     "roles": {
         "admin": "Administrator",

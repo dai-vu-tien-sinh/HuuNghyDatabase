@@ -2,6 +2,7 @@ import streamlit as st
 from auth import init_auth, login, logout
 from database import Database
 from translations import get_text, set_language, get_current_language
+from streamlit_helpers import translate_sidebar_nav
 
 st.set_page_config(
     page_title="Hệ Thống Quản Lý Làng Hữu Nghị",
@@ -16,6 +17,9 @@ def main():
     if 'language_initialized' not in st.session_state:
         st.session_state.language_initialized = True
         set_language('vi')  # Default to Vietnamese
+        
+    # Apply sidebar translations
+    translate_sidebar_nav()
     
     # Language selector in sidebar
     current_lang = get_current_language()
