@@ -9,76 +9,76 @@ def render():
     check_auth()
     check_role(['admin', 'teacher'])
 
-    st.title("Student Management")
+    st.title("Quản Lý Sinh Viên")
 
     db = Database()
 
-    tab1, tab2 = st.tabs(["Student List", "Add Student"])
+    tab1, tab2 = st.tabs(["Danh Sách Sinh Viên", "Thêm Sinh Viên"])
 
     with tab1:
         students = db.get_students()
         if students:
             for student in students:
-                with st.expander(f"Student: {student.full_name}"):
+                with st.expander(f"Sinh viên: {student.full_name}"):
                     col1, col2 = st.columns([1, 3])
 
                     with col1:
-                        # Display profile image if exists
+                        # Hiển thị ảnh hồ sơ nếu có
                         image_data = db.get_student_image(student.id)
                         if image_data:
-                            st.image(image_data, caption="Profile Image")
+                            st.image(image_data, caption="Ảnh hồ sơ")
                         else:
-                            st.info("No profile image")
+                            st.info("Chưa có ảnh hồ sơ")
 
-                        # Upload new image
+                        # Tải lên ảnh mới
                         uploaded_file = st.file_uploader(
-                            "Update profile image",
+                            "Cập nhật ảnh hồ sơ",
                             type=['png', 'jpg', 'jpeg'],
                             key=f"student_img_{student.id}"
                         )
                         if uploaded_file:
                             image_bytes = uploaded_file.getvalue()
                             if db.save_student_image(student.id, image_bytes):
-                                show_success("Image updated successfully!")
+                                show_success("Cập nhật ảnh thành công!")
                                 st.rerun()
                             else:
-                                show_error("Failed to update image")
+                                show_error("Không thể cập nhật ảnh")
 
                     with col2:
-                        st.write(f"Birth Date: {student.birth_date}")
-                        st.write(f"Address: {student.address}")
+                        st.write(f"Ngày sinh: {student.birth_date}")
+                        st.write(f"Địa chỉ: {student.address}")
                         st.write(f"Email: {student.email}")
-                        st.write(f"Admission Date: {student.admission_date}")
-                        st.write(f"Health Status: {student.health_status}")
-                        st.write(f"Academic Status: {student.academic_status}")
+                        st.write(f"Ngày nhập học: {student.admission_date}")
+                        st.write(f"Tình trạng sức khỏe: {student.health_status}")
+                        st.write(f"Tình trạng học tập: {student.academic_status}")
         else:
-            st.info("No students found")
+            st.info("Không tìm thấy sinh viên")
 
     with tab2:
         with st.form("add_student"):
-            st.subheader("Add New Student")
+            st.subheader("Thêm Sinh Viên Mới")
 
             uploaded_file = st.file_uploader(
-                "Profile Image",
+                "Ảnh hồ sơ",
                 type=['png', 'jpg', 'jpeg'],
                 key="new_student_img"
             )
 
-            full_name = st.text_input("Full Name")
-            birth_date = st.date_input("Birth Date")
-            address = st.text_input("Address")
+            full_name = st.text_input("Họ và tên")
+            birth_date = st.date_input("Ngày sinh")
+            address = st.text_input("Địa chỉ")
             email = st.text_input("Email")
-            admission_date = st.date_input("Admission Date")
+            admission_date = st.date_input("Ngày nhập học")
             health_status = st.selectbox(
-                "Health Status", 
-                ["Good", "Fair", "Needs Attention"]
+                "Tình trạng sức khỏe", 
+                ["Tốt", "Bình thường", "Cần chú ý"]
             )
             academic_status = st.selectbox(
-                "Academic Status",
-                ["Excellent", "Good", "Average", "Needs Improvement"]
+                "Tình trạng học tập",
+                ["Xuất sắc", "Tốt", "Trung bình", "Cần cải thiện"]
             )
 
-            if st.form_submit_button("Add Student"):
+            if st.form_submit_button("Thêm sinh viên"):
                 try:
                     cursor = db.conn.cursor()
                     cursor.execute("""
@@ -96,10 +96,10 @@ def render():
                         image_bytes = uploaded_file.getvalue()
                         db.save_student_image(student_id, image_bytes)
 
-                    show_success("Student added successfully!")
+                    show_success("Thêm sinh viên thành công!")
                     st.rerun()
                 except Exception as e:
-                    show_error(f"Error adding student: {str(e)}")
+                    show_error(f"Lỗi khi thêm sinh viên: {str(e)}")
 
 if __name__ == "__main__":
     render()

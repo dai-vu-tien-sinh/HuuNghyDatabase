@@ -8,11 +8,11 @@ def render():
     check_auth()
     check_role(['counselor'])
 
-    st.title("Psychological Evaluation Management")
+    st.title("Quản Lý Đánh Giá Tâm Lý")
 
     db = Database()
 
-    tab1, tab2 = st.tabs(["View Evaluations", "Add Evaluation"])
+    tab1, tab2 = st.tabs(["Xem Đánh Giá", "Thêm Đánh Giá"])
 
     with tab1:
         evaluations = db.conn.execute("""
@@ -26,41 +26,41 @@ def render():
 
         if evaluations:
             for eval in evaluations:
-                with st.expander(f"Evaluation #{eval[0]} - {eval[-3]}"):
-                    st.write(f"Date: {eval[2]}")
-                    st.write(f"Evaluator: {eval[-2]}")
-                    st.write(f"Assessment: {eval[4]}")
-                    st.write(f"Recommendations: {eval[5]}")
+                with st.expander(f"Đánh giá #{eval[0]} - {eval[-3]}"):
+                    st.write(f"Ngày: {eval[2]}")
+                    st.write(f"Người đánh giá: {eval[-2]}")
+                    st.write(f"Đánh giá: {eval[4]}")
+                    st.write(f"Khuyến nghị: {eval[5]}")
                     if eval[6]:
-                        st.write(f"Follow-up Date: {eval[6]}")
+                        st.write(f"Ngày theo dõi tiếp: {eval[6]}")
 
                     if eval[-1]:  # If student has email
                         if not eval[7]:  # If notification not sent
-                            if st.button(f"Send Email Notification", key=f"notify_{eval[0]}"):
+                            if st.button(f"Gửi thông báo email", key=f"notify_{eval[0]}"):
                                 if db.send_psychological_evaluation_notification(eval[0]):
-                                    show_success("Notification sent successfully!")
+                                    show_success("Đã gửi thông báo thành công!")
                                     st.rerun()
                                 else:
-                                    show_error("Failed to send notification")
+                                    show_error("Không thể gửi thông báo")
                         else:
-                            st.info("Notification sent ✓")
+                            st.info("Đã gửi thông báo ✓")
                     else:
-                        st.warning("No student email available")
+                        st.warning("Không có email sinh viên")
         else:
-            st.info("No psychological evaluations found")
+            st.info("Không tìm thấy đánh giá tâm lý")
 
     with tab2:
         with st.form("add_psychological_evaluation"):
-            st.subheader("Add New Psychological Evaluation")
+            st.subheader("Thêm Đánh Giá Tâm Lý Mới")
 
-            student_id = st.number_input("Student ID", min_value=1, step=1)
-            assessment = st.text_area("Assessment")
-            recommendations = st.text_area("Recommendations")
-            follow_up_date = st.date_input("Follow-up Date")
+            student_id = st.number_input("ID Sinh viên", min_value=1, step=1)
+            assessment = st.text_area("Đánh giá")
+            recommendations = st.text_area("Khuyến nghị")
+            follow_up_date = st.date_input("Ngày theo dõi tiếp")
 
-            send_notification = st.checkbox("Send email notification")
+            send_notification = st.checkbox("Gửi thông báo email")
 
-            if st.form_submit_button("Add Evaluation"):
+            if st.form_submit_button("Thêm đánh giá"):
                 try:
                     eval_id = db.add_psychological_evaluation({
                         "student_id": student_id,
@@ -71,15 +71,15 @@ def render():
                     })
 
                     if eval_id:
-                        show_success("Psychological evaluation added successfully!")
+                        show_success("Thêm đánh giá tâm lý thành công!")
                         if send_notification:
                             if db.send_psychological_evaluation_notification(eval_id):
-                                show_success("Notification sent successfully!")
+                                show_success("Đã gửi thông báo thành công!")
                             else:
-                                show_error("Failed to send notification")
+                                show_error("Không thể gửi thông báo")
                         st.rerun()
                 except Exception as e:
-                    show_error(f"Error adding evaluation: {str(e)}")
+                    show_error(f"Lỗi khi thêm đánh giá: {str(e)}")
 
 if __name__ == "__main__":
     render()

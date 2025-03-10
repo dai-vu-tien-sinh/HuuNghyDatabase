@@ -8,11 +8,11 @@ def render():
     check_auth()
     check_role(['doctor'])
 
-    st.title("Medical Records Management")
+    st.title("Quản Lý Hồ Sơ Y Tế")
 
     db = Database()
 
-    tab1, tab2 = st.tabs(["View Records", "Add Record"])
+    tab1, tab2 = st.tabs(["Xem Hồ Sơ", "Thêm Hồ Sơ"])
 
     with tab1:
         records = db.conn.execute("""
@@ -30,39 +30,39 @@ def render():
 
         if records:
             for record in records:
-                with st.expander(f"Record #{record[0]} - {record[2]} {record[1]}"):
-                    st.write(f"Diagnosis: {record[3]}")
-                    st.write(f"Treatment: {record[4]}")
-                    st.write(f"Doctor: {record[-2]}")
-                    st.write(f"Date: {record[6]}")
+                with st.expander(f"Hồ sơ #{record[0]} - {record[2]} {record[1]}"):
+                    st.write(f"Chẩn đoán: {record[3]}")
+                    st.write(f"Điều trị: {record[4]}")
+                    st.write(f"Bác sĩ: {record[-2]}")
+                    st.write(f"Ngày: {record[6]}")
                     if record[-1]:  # If patient has email
                         if not record[8]:  # If notification not sent
-                            if st.button(f"Send Email Notification", key=f"notify_{record[0]}"):
+                            if st.button(f"Gửi thông báo email", key=f"notify_{record[0]}"):
                                 if db.send_medical_record_notification(record[0]):
-                                    show_success("Notification sent successfully!")
+                                    show_success("Đã gửi thông báo thành công!")
                                     st.rerun()
                                 else:
-                                    show_error("Failed to send notification")
+                                    show_error("Không thể gửi thông báo")
                         else:
-                            st.info("Notification sent ✓")
+                            st.info("Đã gửi thông báo ✓")
                     else:
-                        st.warning("No patient email available")
+                        st.warning("Không có email bệnh nhân")
         else:
-            st.info("No medical records found")
+            st.info("Không tìm thấy hồ sơ y tế")
 
     with tab2:
         with st.form("add_medical_record"):
-            st.subheader("Add New Medical Record")
+            st.subheader("Thêm Hồ Sơ Y Tế Mới")
 
-            patient_type = st.selectbox("Patient Type", ["student", "veteran"])
-            patient_id = st.number_input("Patient ID", min_value=1, step=1)
-            diagnosis = st.text_area("Diagnosis")
-            treatment = st.text_area("Treatment")
-            notes = st.text_area("Additional Notes")
+            patient_type = st.selectbox("Loại bệnh nhân", ["student", "veteran"])
+            patient_id = st.number_input("ID Bệnh nhân", min_value=1, step=1)
+            diagnosis = st.text_area("Chẩn đoán")
+            treatment = st.text_area("Điều trị")
+            notes = st.text_area("Ghi chú thêm")
 
-            send_notification = st.checkbox("Send email notification")
+            send_notification = st.checkbox("Gửi thông báo email")
 
-            if st.form_submit_button("Add Record"):
+            if st.form_submit_button("Thêm hồ sơ"):
                 try:
                     record_id = db.add_medical_record({
                         "patient_id": patient_id,
@@ -74,15 +74,15 @@ def render():
                     })
 
                     if record_id:
-                        show_success("Medical record added successfully!")
+                        show_success("Thêm hồ sơ y tế thành công!")
                         if send_notification:
                             if db.send_medical_record_notification(record_id):
-                                show_success("Notification sent successfully!")
+                                show_success("Đã gửi thông báo thành công!")
                             else:
-                                show_error("Failed to send notification")
+                                show_error("Không thể gửi thông báo")
                         st.rerun()
                 except Exception as e:
-                    show_error(f"Error adding medical record: {str(e)}")
+                    show_error(f"Lỗi khi thêm hồ sơ y tế: {str(e)}")
 
 if __name__ == "__main__":
     render()

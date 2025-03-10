@@ -3,7 +3,7 @@ from auth import init_auth, login, logout
 from database import Database
 
 st.set_page_config(
-    page_title="Làng Hữu Nghị Management System",
+    page_title="Hệ Thống Quản Lý Làng Hữu Nghị",
     page_icon="🏠",
     layout="wide"
 )
@@ -11,45 +11,45 @@ st.set_page_config(
 def main():
     init_auth()
 
-    st.title("Làng Hữu Nghị Management System")
+    st.title("Hệ Thống Quản Lý Làng Hữu Nghị")
 
     if not st.session_state.authenticated:
         with st.form("login_form"):
-            st.subheader("Login")
-            username = st.text_input("Username")
-            password = st.text_input("Password", type="password")
-            submit = st.form_submit_button("Login")
+            st.subheader("Đăng Nhập")
+            username = st.text_input("Tên đăng nhập")
+            password = st.text_input("Mật khẩu", type="password")
+            submit = st.form_submit_button("Đăng nhập")
 
             if submit:
                 if login(username, password):
-                    st.success("Login successful!")
+                    st.success("Đăng nhập thành công!")
                     st.rerun()
                 else:
-                    st.error("Invalid username or password")
+                    st.error("Tên đăng nhập hoặc mật khẩu không đúng")
     else:
-        st.sidebar.title(f"Welcome, {st.session_state.user.full_name}")
-        st.sidebar.text(f"Role: {st.session_state.user.role}")
+        st.sidebar.title(f"Xin chào, {st.session_state.user.full_name}")
+        st.sidebar.text(f"Vai trò: {st.session_state.user.role}")
 
-        if st.sidebar.button("Logout"):
+        if st.sidebar.button("Đăng xuất"):
             logout()
             st.rerun()
 
-        # Display role-specific dashboard
+        # Hiển thị dashboard theo vai trò
         if st.session_state.user.role == "admin":
-            st.header("Admin Dashboard")
-            st.write("Welcome to the admin dashboard. Use the sidebar to navigate to different sections.")
+            st.header("Bảng Điều Khiển Quản Trị")
+            st.write("Chào mừng đến với bảng điều khiển quản trị. Sử dụng thanh bên để điều hướng đến các phần khác nhau.")
 
         elif st.session_state.user.role == "doctor":
-            st.header("Medical Dashboard")
-            st.write("Access medical records and patient information through the sidebar menu.")
+            st.header("Bảng Điều Khiển Y Tế")
+            st.write("Truy cập hồ sơ y tế và thông tin bệnh nhân thông qua menu bên.")
 
         elif st.session_state.user.role == "teacher":
-            st.header("Teacher Dashboard")
-            st.write("View and manage student information using the sidebar menu.")
+            st.header("Bảng Điều Khiển Giáo Viên")
+            st.write("Xem và quản lý thông tin sinh viên bằng menu bên.")
 
         elif st.session_state.user.role == "counselor":
-            st.header("Counselor Dashboard")
-            st.write("Access psychological evaluations and student support information.")
+            st.header("Bảng Điều Khiển Tư Vấn")
+            st.write("Truy cập đánh giá tâm lý và thông tin hỗ trợ sinh viên.")
 
 if __name__ == "__main__":
     main()
